@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GeoAnalytics NCC | Portafolio GEE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- VARIABLES DE DISEÑO --- */
+        :root {
+            --bg-dark: #051d0f; 
+            --card-glass: rgba(20, 50, 35, 0.75);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f0fdf4;
+            --text-secondary: #a3b8ac;
+            --accent-primary: #4ade80; 
+            --accent-secondary: #2dd4bf;
+            --glow: 0 0 25px rgba(74, 222, 128, 0.25);
+            --btn-gradient: linear-gradient(90deg, #0f3820 0%, #051d0f 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            color: var(--text-primary);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(45, 212, 191, 0.1), transparent 30%),
+                radial-gradient(circle at 85% 30%, rgba(74, 222, 128, 0.1), transparent 30%);
+            min-height: 100vh;
+            overflow-x: hidden; /* Evita scroll horizontal en móviles */
+        }
+
+        /* --- HEADER RESPONSIVE --- */
+        header {
+            position: relative;
+            padding: 80px 20px 40px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');
+            background-size: cover; background-position: center;
+            opacity: 0.2; z-index: -1;
+            mask-image: linear-gradient(to bottom, black, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, black, transparent);
+            filter: hue-rotate(80deg);
+        }
+        
+        header h1 { 
+            font-size: 3rem; font-weight: 700; letter-spacing: -1px;
+            background: linear-gradient(to right, #fff, #86efac);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 15px; line-height: 1.1;
+        }
+        
+        header p { color: var(--text-secondary); font-size: 1.1rem; max-width: 600px; margin: 0 auto; padding: 0 10px; }
+
+        /* --- CONTROLES --- */
+        .controls-area {
+            max-width: 800px; margin: 40px auto; padding: 0 20px;
+            display: flex; flex-direction: column; gap: 20px; align-items: center;
+        }
+
+        .search-wrapper { position: relative; width: 100%; max-width: 500px; }
+
+        .search-input {
+            width: 100%; padding: 16px 50px 16px 25px;
+            border-radius: 12px; border: 1px solid var(--card-border);
+            background: rgba(10, 30, 20, 0.6); backdrop-filter: blur(10px);
+            color: white; font-size: 1rem; transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none; border-color: var(--accent-primary);
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
+        }
+
+        .search-icon { position: absolute; right: 20px; top: 18px; color: var(--text-secondary); pointer-events: none; }
+
+        .filter-container { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+        .filter-btn {
+            background: rgba(20, 50, 35, 0.5); border: 1px solid var(--card-border);
+            color: var(--text-secondary); padding: 8px 16px; border-radius: 20px;
+            cursor: pointer; font-size: 0.9rem; transition: all 0.3s;
+            white-space: nowrap; /* Evita que el texto del botón se rompa */
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(74, 222, 128, 0.15); color: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        /* --- GRID RESPONSIVE --- */
+        .container { max-width: 1200px; margin: 0 auto 60px; padding: 0 20px; }
+        
+        .grid {
+            display: grid;
+            /* AUTO-FIT: Clave para responsive. Se adapta desde 280px (móvil estrecho) hacia arriba */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* --- TARJETA --- */
+        .card {
+            background: var(--card-glass); backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border); border-radius: 20px;
+            overflow: hidden; display: flex; flex-direction: column;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-5px); border-color: rgba(74, 222, 128, 0.4);
+            box-shadow: var(--glow);
+        }
+
+        .card-img-wrapper {
+            height: 180px; position: relative; overflow: hidden; flex-shrink: 0;
+        }
+        
+        .card-img-wrapper img { 
+            width: 100%; height: 100%; object-fit: cover; 
+            transition: transform 0.7s ease, filter 0.3s ease;
+        }
+
+        .card:hover .card-img-wrapper img { transform: scale(1.1); filter: brightness(1.15) contrast(1.1); }
+
+        /* Overlay suave para ver mejor la imagen */
+        .card-img-wrapper::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(5, 29, 15, 0.6) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .badge {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(0, 20, 10, 0.7); backdrop-filter: blur(4px);
+            padding: 4px 10px; border-radius: 6px;
+            font-size: 0.75rem; font-weight: 600; color: var(--accent-primary);
+            border: 1px solid rgba(74, 222, 128, 0.3); z-index: 2;
+        }
+
+        .card-content { padding: 24px; display: flex; flex-direction: column; height: 100%; }
+
+        .card-title { 
+            font-size: 1.3rem; margin-bottom: 12px; 
+            color: var(--text-primary); font-weight: 600;
+        }
+
+        .card-desc { 
+            color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 10px;
+            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+            overflow: hidden; transition: all 0.3s ease;
+        }
+
+        .card-desc.expanded { -webkit-line-clamp: unset; display: block; }
+
+        .read-more-btn {
+            background: none; border: none; color: var(--accent-primary);
+            font-size: 0.85rem; font-weight: 600; cursor: pointer;
+            align-self: flex-start; margin-bottom: 20px; padding: 5px 0; /* Más área táctil */
+            text-decoration: underline; text-underline-offset: 4px;
+            opacity: 0.8; transition: opacity 0.2s;
+        }
+        
+        .read-more-btn:hover { opacity: 1; }
+
+        .btn-launch {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: var(--btn-gradient); color: var(--accent-primary);
+            padding: 12px; border-radius: 12px; text-decoration: none;
+            font-weight: 600; border: 1px solid rgba(74, 222, 128, 0.2);
+            transition: all 0.3s; margin-top: auto;
+        }
+
+        .btn-launch:hover {
+            background: var(--accent-primary); color: #022c14;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+        }
+
+        footer {
+            text-align: center; padding: 40px 20px; border-top: 1px solid var(--card-border);
+            color: var(--text-secondary); font-size: 0.9rem; margin-top: 40px;
+        }
+
+        /* --- MEDIA QUERIES (ADAPTACIÓN A MÓVILES) --- */
+        @media (max-width: 768px) {
+            header { padding: 60px 15px 30px; }
+            header h1 { font-size: 2.2rem; }
+            .controls-area { margin: 30px auto; gap: 15px; }
+            .grid { gap: 20px; }
+        }
+
+        @media (max-width: 480px) {
+            header h1 { font-size: 1.8rem; }
+            header p { font-size: 1rem; }
+            
+            /* Ajuste de controles en móvil */
+            .search-input { padding: 14px 40px 14px 20px; font-size: 0.95rem; }
+            .filter-btn { padding: 6px 12px; font-size: 0.8rem; }
+            
+            /* Ajuste de tarjeta en móvil */
+            .card-img-wrapper { height: 160px; } /* Imagen un poco más pequeña */
+            .card-content { padding: 20px; }
+            .card-title { font-size: 1.2rem; }
+            .container { padding: 0 15px; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card { animation: fadeIn 0.6s ease forwards; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><i class="fa-solid fa-layer-group" style="color: var(--accent-primary);"></i> GeoAnalytics NCC</h1>
+        <p>Plataforma de inteligencia territorial y teledetección satelital aplicado a la NCC</p>
+    </header>
+
+    <div class="controls-area">
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" class="search-input" placeholder="Buscar mapas...">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        </div>
+
+        <div class="filter-container" id="filterContainer">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="Machine Learning">Machine Learning</button>
+            <button class="filter-btn" data-filter="Change Detection">Cambios</button>
+            <button class="filter-btn" data-filter="Estadística">Estadística</button>
+            <button class="filter-btn" data-filter="Utilidad">Utilidad</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="appGrid" class="grid"></div>
+    </div>
+
+    <footer>
+        <p>Desarrollado By DICH <strong>Google Earth Engine API</strong> &copy; 2026</p>
+        <p style="margin-top: 10px; opacity: 0.7;"> Geómatica | Análisis Espacial Avanzado</p>
+    </footer>
+
+    <script>
+        const myApps = [
+            {
+                title: "Detección de Bofedales",
+                description: "Aplicación interactiva para detectar, cuantificar y analizar la evolución de bofedales. Incluye análisis de tendencias anuales, detección de cambios de cobertura y estadísticas automatizadas usando teledetección óptica y topográfica. Permite exportar los resultados en formato vectorial y tabular para su posterior análisis hidrológico.",
+                url: "https://ee-citiggeomatica.projects.earthengine.app/view/deteccionbofedales",
+                image: "https://github.com/citiggeomatica/AppGEENCC/blob/b17ad13cbc8007188b1d5167025596f18d4f1a33/img/deteccionbofedales.JPG?raw=true",
+                tags: "Machine Learning"
+            },
+            {
+                title: "Expansión Urbana NCC",
+                description: "Herramienta de simulación y monitoreo de la expansión urbana en la Nueva Carretera Central. Integra MapBiomas Perú con modelos predictivos (Autómatas Celulares y Random Forest) para proyectar crecimiento al 2025, 2030 y 2036. Facilita la identificación de zonas críticas de invasión y planificación territorial sostenible.",
+                url: "https://ee-citiggeomatica.projects.earthengine.app/view/expansionurbana",
+                image: "https://github.com/citiggeomatica/AppGEENCC/blob/b17ad13cbc8007188b1d5167025596f18d4f1a33/img/expansionurb.JPG?raw=true",
+                tags: "Change Detection"
+            },
+            {
+                title: "Análisis Cobertura Vegetal",
+                description: "Monitoreo ambiental integral con arquitectura multisensor (Sentinel-2, GEDI, MODIS). Ejecuta clasificación en tiempo real, medición de estructura vertical del bosque (LiDAR) y genera estadísticas de salud vegetal. Ideal para estudios de impacto ambiental y seguimiento de planes de reforestación.",
+                url: "https://ee-citiggeomatica.projects.earthengine.app/view/coberturavegetal",
+                image: "https://github.com/citiggeomatica/AppGEENCC/blob/main/img/coberturaveg.JPG?raw=true",
+                tags: "Estadística"
+            },
+            {
+                title: "Datos Climáticos NCC",
+                description: "Sistema climatológico que integra CHIRPS, TerraClimate y ERA5-Land. Visualización a 30m de resolución, estadísticas zonales y series temporales (2018-2024) para precipitación, temperatura y evapotranspiración. Provee datos esenciales para modelos hidrológicos y gestión de riesgos de desastres.",
+                url: "https://ee-citiggeomatica.projects.earthengine.app/view/datosclimaticosncc",
+                image: "https://github.com/citiggeomatica/AppGEENCC/blob/b17ad13cbc8007188b1d5167025596f18d4f1a33/img/datosclima.JPG?raw=true",
+                tags: "Estadística"
+            },
+            {
+                title: "Monitoreo Ambiental",
+                description: "Diagnóstico ambiental avanzado para variables críticas como estrés hídrico, severidad de incendios y temperatura superficial, integrando datos ópticos, térmicos y de radar. Herramienta fundamental para la alerta temprana y respuesta rápida ante eventos extremos.",
+                url: "https://ee-citiggeomatica.projects.earthengine.app/view/monitoreoambiental",
+                image: "https://github.com/citiggeomatica/AppGEENCC/blob/b17ad13cbc8007188b1d5167025596f18d4f1a33/img/monaambiental.JPG?raw=true",
+                tags: "Utilidad"
+            }
+        ];
+
+        const gridContainer = document.getElementById('appGrid');
+        const searchInput = document.getElementById('searchInput');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        let currentFilter = 'all';
+        let currentSearch = '';
+
+        window.toggleDescription = function(btnId) {
+            const btn = document.getElementById(btnId);
+            const desc = btn.previousElementSibling;
+            desc.classList.toggle('expanded');
+            
+            if (desc.classList.contains('expanded')) {
+                btn.textContent = "Leer menos";
+            } else {
+                btn.textContent = "Leer más...";
+            }
+        };
+
+        function renderApps() {
+            gridContainer.innerHTML = '';
+            const filteredApps = myApps.filter(app => {
+                const matchSearch = app.title.toLowerCase().includes(currentSearch) || 
+                                  app.description.toLowerCase().includes(currentSearch);
+                const matchFilter = currentFilter === 'all' || app.tags === currentFilter;
+                return matchSearch && matchFilter;
+            });
+
+            if (filteredApps.length === 0) {
+                gridContainer.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <i class="fa-regular fa-folder-open" style="font-size: 3rem; margin-bottom: 10px;"></i>
+                        <p>No se encontraron aplicativos.</p>
+                    </div>`;
+                return;
+            }
+
+            filteredApps.forEach((app, index) => {
+                const uniqueId = `btn-${index}`;
+                const cardHTML = `
+                    <article class="card" style="animation-delay: ${index * 0.1}s">
+                        <div class="card-img-wrapper">
+                            <span class="badge">${app.tags}</span>
+                            <img src="${app.image}" alt="${app.title}" loading="lazy">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">${app.title}</h3>
+                            <p class="card-desc">${app.description}</p>
+                            <button id="${uniqueId}" class="read-more-btn" onclick="toggleDescription('${uniqueId}')">Leer más...</button>
+                            <a href="${app.url}" target="_blank" class="btn-launch">
+                                <span>Explorar Mapa</span> 
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                        </div>
+                    </article>
+                `;
+                gridContainer.innerHTML += cardHTML;
+            });
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            currentSearch = e.target.value.toLowerCase();
+            renderApps();
+        });
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.getAttribute('data-filter');
+                renderApps();
+            });
+        });
+
+        renderApps();
+    </script>
+</body>
+</html>
