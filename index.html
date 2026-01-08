@@ -30,7 +30,7 @@
                 radial-gradient(circle at 15% 50%, rgba(45, 212, 191, 0.1), transparent 30%),
                 radial-gradient(circle at 85% 30%, rgba(74, 222, 128, 0.1), transparent 30%);
             min-height: 100vh;
-            overflow-x: hidden; /* Evita scroll horizontal en móviles */
+            overflow-x: hidden;
         }
 
         /* --- HEADER RESPONSIVE --- */
@@ -88,7 +88,7 @@
             background: rgba(20, 50, 35, 0.5); border: 1px solid var(--card-border);
             color: var(--text-secondary); padding: 8px 16px; border-radius: 20px;
             cursor: pointer; font-size: 0.9rem; transition: all 0.3s;
-            white-space: nowrap; /* Evita que el texto del botón se rompa */
+            white-space: nowrap;
         }
 
         .filter-btn:hover, .filter-btn.active {
@@ -101,7 +101,6 @@
         
         .grid {
             display: grid;
-            /* AUTO-FIT: Clave para responsive. Se adapta desde 280px (móvil estrecho) hacia arriba */
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
             align-items: start;
@@ -132,7 +131,6 @@
 
         .card:hover .card-img-wrapper img { transform: scale(1.1); filter: brightness(1.15) contrast(1.1); }
 
-        /* Overlay suave para ver mejor la imagen */
         .card-img-wrapper::after {
             content: ''; position: absolute; inset: 0;
             background: linear-gradient(to top, rgba(5, 29, 15, 0.6) 0%, transparent 70%);
@@ -165,7 +163,7 @@
         .read-more-btn {
             background: none; border: none; color: var(--accent-primary);
             font-size: 0.85rem; font-weight: 600; cursor: pointer;
-            align-self: flex-start; margin-bottom: 20px; padding: 5px 0; /* Más área táctil */
+            align-self: flex-start; margin-bottom: 20px; padding: 5px 0;
             text-decoration: underline; text-underline-offset: 4px;
             opacity: 0.8; transition: opacity 0.2s;
         }
@@ -191,7 +189,7 @@
             color: var(--text-secondary); font-size: 0.9rem; margin-top: 40px;
         }
 
-        /* --- MEDIA QUERIES (ADAPTACIÓN A MÓVILES) --- */
+        /* --- MEDIA QUERIES --- */
         @media (max-width: 768px) {
             header { padding: 60px 15px 30px; }
             header h1 { font-size: 2.2rem; }
@@ -202,13 +200,9 @@
         @media (max-width: 480px) {
             header h1 { font-size: 1.8rem; }
             header p { font-size: 1rem; }
-            
-            /* Ajuste de controles en móvil */
             .search-input { padding: 14px 40px 14px 20px; font-size: 0.95rem; }
             .filter-btn { padding: 6px 12px; font-size: 0.8rem; }
-            
-            /* Ajuste de tarjeta en móvil */
-            .card-img-wrapper { height: 160px; } /* Imagen un poco más pequeña */
+            .card-img-wrapper { height: 160px; }
             .card-content { padding: 20px; }
             .card-title { font-size: 1.2rem; }
             .container { padding: 0 15px; }
@@ -289,15 +283,20 @@
                 image: "https://github.com/citiggeomatica/AppGEENCC/blob/b17ad13cbc8007188b1d5167025596f18d4f1a33/img/monaambiental.JPG?raw=true",
                 tags: "Utilidad"
             },
-
-                {
+            {
                 title: "Amenaza y Riesgo",
-                description: "Sistema de evaluación de amenaza y riesgo por movimientos en masa para  la Nueva Carretera Central (NCC). Implementa un modelo heurístico multi-criterio que integra 6 variables ponderadas: Pendiente (35%), Curvatura, Precipitación (CHIRPS), NDVI, NDMI y Rugosidad del Terreno (TRI). El sistema diferencia entre la Susceptibilidad (condición intrínseca del terreno) y el Riesgo (incorporando la exposición por proximidad a la vía), permitiendo identificar 'Zonas Críticas' a menos de 500m del eje vial.",
+                description: "Sistema de evaluación de amenaza y riesgo por movimientos en masa para la Nueva Carretera Central (NCC). Implementa un modelo heurístico multi-criterio que integra 6 variables ponderadas: Pendiente (35%), Curvatura, Precipitación (CHIRPS), NDVI, NDMI y Rugosidad del Terreno (TRI). El sistema diferencia entre la Susceptibilidad (condición intrínseca del terreno) y el Riesgo (incorporando la exposición por proximidad a la vía), permitiendo identificar 'Zonas Críticas' a menos de 500m del eje vial.",
                 url: "https://ee-citiggeomatica.projects.earthengine.app/view/riesgomovmasa",
                 image: "https://github.com/citiggeomatica/AppGEENCC/blob/main/img/riesgo.JPG?raw=true",
                 tags: "Utilidad"
-            }  
-            
+            },
+            {
+                title: "Monitoreo de Lomas",
+                description: "Esta aplicación visualiza la dinámica estacional de las lomas costeras, Filtro Topográfico: Pendiente > 12° para descartar fondos de valle. Discriminación Fenológica: Se aísla la vegetación que presenta 'muerte estival' (NDVI Verano < 0.12), eliminando falsos positivos por arbustos, árboles y cultivos permanentes.",
+                url: "https://ee-citiggeomatica.projects.earthengine.app/view/lomascosteras",
+                image: "https://raw.githubusercontent.com/citiggeomatica/AppGEENCC/refs/heads/main/img/lomascosteras.jpg",
+                tags: "Utilidad"
+            }       
         ];
 
         const gridContainer = document.getElementById('appGrid');
@@ -322,7 +321,7 @@
             gridContainer.innerHTML = '';
             const filteredApps = myApps.filter(app => {
                 const matchSearch = app.title.toLowerCase().includes(currentSearch) || 
-                                  app.description.toLowerCase().includes(currentSearch);
+                                    app.description.toLowerCase().includes(currentSearch);
                 const matchFilter = currentFilter === 'all' || app.tags === currentFilter;
                 return matchSearch && matchFilter;
             });
@@ -376,10 +375,7 @@
         renderApps();
     </script>
 </body>
-
 </html>
-
-
 
 
 
